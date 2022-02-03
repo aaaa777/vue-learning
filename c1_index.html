@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>c1_index テストページ</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    </head>
+    <body>
+        
+        <div class="tab-content">
+
+        </div>
+
+        <div class="main-content">
+            <table id="presidents-table" class="presidents-table">
+                <thead>
+                    <tr>
+                        <th v-for="(header, index) in headers"
+                            v-bind:key="index">
+                            {{ header }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(president, index) in presidents"
+                        v-bind:key="index">
+                        <td v-for="(col) in president">{{ col }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
+    
+<!-- vue script area -->
+<script>
+
+// テーブルヘッダ
+const headers = ["代", "名前", "読み"]
+// テーブルレコード達
+const presidents = [
+    { gen: "91", name: "福田康夫", ruby: "ふくだやすお" },
+    { gen: "92", name: "麻生太郎", ruby: "あそうたろう" }
+]
+
+const tableApp = new Vue ({
+    el: ".main-content",
+    data: function() {
+        return {
+            headers,
+            presidents
+        }
+    }
+})
+
+
+// これより下は未使用
+
+const vm = new Vue ({
+    el: ".tab-content",
+    data: function() {
+        return {
+            "active-tab": "tab-1"
+        }
+    }
+})
+
+const presidentUS = { template: '<p>us</p>'}
+
+const presidentJP = { template: '<p>jp</p>' }
+
+const router = new VueRouter({
+    routes: [
+        {
+            path: "/jp",
+            component: presidentJP
+        }
+    ]
+})
+
+</script>
