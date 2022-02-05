@@ -2,73 +2,126 @@
 <html>
     <head>
         <title>c1_index テストページ</title>
+        <!--<script src="https://unpkg.com/vue@next"></script>-->
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+        <style type="text/css">li{cursor:pointer;list-style:none;}.is-active{color:#FFF;background:#000;}</style>
     </head>
     <body>
-        
-        <div class="tab-content">
-
-        </div>
+    <div id="app">
+        <ul class="tab-content">
+            <li 
+                v-on:click="onActive(n)"
+                v-for="(country, n) in tabCountries"
+                :key="n" :attr-key="n"
+                v-bind:class="activeItem === n ? 'is-active' : null"
+                >
+                {{ country.desc }}
+            </li>
+        </ul>
 
         <div class="main-content">
             <table id="presidents-table" class="presidents-table">
                 <thead>
                     <tr>
-                        <th v-for="(header, index) in headers"
+                        <th v-for="(header, index) in getPresidentTh(activeItem)"
                             v-bind:key="index">
                             {{ header }}
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(president, index) in presidents"
+                    <tr v-for="(president, index) in getPresidentTd(activeItem)"
                         v-bind:key="index">
                         <td v-for="(col) in president">{{ col }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
     </body>
 </html>
     
 <!-- vue script area -->
 <script>
 
-// テーブルヘッダ
-const headers = ["代", "名前", "読み"]
-// テーブルレコード達
+// 仮データ
+var presidentUS = {
+    header: ["代", "カタカナ", "ひらがな"],
+    body: [
+        { gen: "1", name: "トランプ", origin: "とらんぷ" },
+        { gen: "2", name: "バイデン", origin: "ばいでん" }
+    ]
+}
+
+// 仮データ
+var presidentJP = {
+    header: ["代", "名前", "読み"],
+    body: [
+        { gen: "91", name: "福田康夫", ruby: "ふくだやすお" },
+        { gen: "92", name: "麻生太郎", ruby: "あそうたろう" }
+    ]
+}
+
+// タブリスト
+const tabCountries = [
+    { country: "ja", desc: "歴代内閣総理大臣" },
+    { country: "us", desc: "歴代米国大統領" }
+]
+
+// テーブルレコードリスト
 const presidents = [
-    { gen: "91", name: "福田康夫", ruby: "ふくだやすお" },
-    { gen: "92", name: "麻生太郎", ruby: "あそうたろう" }
+    presidentJP,
+    presidentUS
 ]
 
 const tableApp = new Vue ({
-    el: ".main-content",
-    data: function() {
+    el: "#app",
+    
+    // 使う変数の宣言みたいなイメージ
+    data() {
         return {
-            headers,
-            presidents
+            // "presidents": presidentsの省略形
+            presidents,
+            tabCountries,
+
+            // デフォルト値
+            activeItem: null
+        }
+    },
+
+    // 使うメソッドの宣言
+    methods: {
+
+        // タブクリック時に呼ばれる関数
+        // 引数nにはkey要素のnが渡される
+        onActive(n) {
+            console.log('selected: "' + n + '"')
+            
+            // 同じ要素が2回押された時、activeItemにnullを格納
+            if(this.activeItem === n){
+                this.activeItem = null;
+
+            // それ以外なら、activeItemに押された要素のkeyを格納
+            }else{
+                this.activeItem = n;
+            }
+        },
+
+        // 首相テーブルヘッダの取得
+        getPresidentTh(n) {
+            let data = presidents[n]
+            return data ? data['header'] : []
+        },
+        // 首相テーブルヘッダの取得
+        getPresidentTd(n) {
+            let data = presidents[n]
+            return data ? data['body'] : {}
         }
     }
 })
 
-
-// これより下は未使用
-
-const vm = new Vue ({
-    el: ".tab-content",
-    data: function() {
-        return {
-            "active-tab": "tab-1"
-        }
-    }
-})
-
-const presidentUS = { template: '<p>us</p>'}
-
-const presidentJP = { template: '<p>jp</p>' }
-
+/*
 const router = new VueRouter({
     routes: [
         {
@@ -77,5 +130,5 @@ const router = new VueRouter({
         }
     ]
 })
-
+*/
 </script>
